@@ -1,26 +1,33 @@
 use poise::serenity_prelude as serenity;
-use std::env;
 use dotenv::dotenv;
 
-struct Data {}
+struct Data {} // user data
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
+// create slash command
 #[poise::command(slash_command)]
 async fn test(ctx: Context<'_>) -> Result<(), Error> {
-    let response = format!("This is a test!");
-    ctx.say(response).await?;
+    // send response
+    let response = "This is a test!";
+    ctx.say(response.to_string()).await?;
     Ok(())
 }
 
 #[tokio::main]
 async fn main() {
-    dotenv::from_path(".env").expect("Failed to load .env");
-    dotenv().ok();
+    // get token from .env file
+    dotenv::from_path(".env").expect("[!] No path found to .env");
+    dotenv().expect("[!] Error loading .env file");
 
+    // set token variable
     let token = std::env::var("TOKEN").expect("[!] No Bot Token Provided");
+
+    // set bot intents
     let intents = serenity::GatewayIntents::all();
 
+    // setup pose framework
+    // this includes slash commands and guild(s)
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![test()],
@@ -34,7 +41,9 @@ async fn main() {
         })
         .build();
 
+    // create bot client
     let client = serenity::ClientBuilder::new(token, intents).framework(framework).await;
 
+    // start the client
     client.unwrap().start().await.unwrap();
 }
