@@ -1,11 +1,11 @@
-use functions::ask_frong;
+use functions::{ask_frong, frong};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
 use std::sync::Arc;
 
 mod functions;
 
-pub struct Data {} // user data
+struct Data {} // user data
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
@@ -13,6 +13,17 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 #[poise::command(prefix_command)]
 async fn register(ctx: Context<'_>) -> Result<(), Error> {
     poise::builtins::register_application_commands_buttons(ctx).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command)]
+async fn age(
+    ctx: Context<'_>,
+    #[description = "Selected user"] user: Option<serenity::User>,
+) -> Result<(), Error> {
+    let u = user.as_ref().unwrap_or_else(|| ctx.author());
+    let response = format!("{}'s account was created at {}", u.name, u.created_at());
+    ctx.say(response).await?;
     Ok(())
 }
 
@@ -35,7 +46,8 @@ async fn main() {
             // list of slash commands
             commands: vec![
                 register(),
-                ask_frong::ask_frong()
+                ask_frong::ask_frong(),
+                frong::frong(),
             ],
             // prefix command for debug
             // used to easily register commands
