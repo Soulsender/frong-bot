@@ -48,6 +48,11 @@ async fn main() {
                 register(),
                 ask_frong::ask_frong(),
                 frong::frong(),
+                frong::frongincidence(),
+                frong::frang(),
+                frong::frongonianunits(),
+                frong::unfuckwithable(),
+                frong::frongs(),
             ],
             // prefix command for debug
             // used to easily register commands
