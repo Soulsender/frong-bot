@@ -1,16 +1,18 @@
+use functions::ask_frong;
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
+use std::sync::Arc;
 
-struct Data {} // user data
+mod functions;
+
+pub struct Data {} // user data
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-// create slash command
-#[poise::command(slash_command)]
-async fn test(ctx: Context<'_>) -> Result<(), Error> {
-    // send response
-    let response = "This is a test!";
-    ctx.say(response.to_string()).await?;
+// define debug slash command register
+#[poise::command(prefix_command)]
+async fn register(ctx: Context<'_>) -> Result<(), Error> {
+    poise::builtins::register_application_commands_buttons(ctx).await?;
     Ok(())
 }
 
@@ -30,7 +32,19 @@ async fn main() {
     // this includes slash commands and guild(s)
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![test()],
+            // list of slash commands
+            commands: vec![
+                register(),
+                ask_frong::ask_frong()
+            ],
+            // prefix command for debug
+            // used to easily register commands
+                prefix_options: poise::PrefixFrameworkOptions {
+                    prefix: Some("~debug".into()),
+                    edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(std::time::Duration::from_secs(3600)))),
+                    case_insensitive_commands: true,
+                    ..Default::default()
+                },
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
