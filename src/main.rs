@@ -2,6 +2,8 @@ use functions::{ask_frong, frong};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
 use std::sync::Arc;
+use serenity::{async_trait, prelude, Message, EventHandler};
+
 
 mod functions;
 
@@ -16,15 +18,15 @@ async fn register(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-#[poise::command(slash_command, prefix_command)]
-async fn age(
-    ctx: Context<'_>,
-    #[description = "Selected user"] user: Option<serenity::User>,
-) -> Result<(), Error> {
-    let u = user.as_ref().unwrap_or_else(|| ctx.author());
-    let response = format!("{}'s account was created at {}", u.name, u.created_at());
-    ctx.say(response).await?;
-    Ok(())
+struct Handler;
+
+#[serenity::async_trait]
+impl EventHandler for Handler {
+    async fn message(&self, ctx: poise::serenity_prelude::Context, msg: Message) {
+        if (msg.content == "asd") {
+            ctx.say("yes").await?;
+        }
+    }
 }
 
 #[tokio::main]
@@ -57,7 +59,7 @@ async fn main() {
             // prefix command for debug
             // used to easily register commands
                 prefix_options: poise::PrefixFrameworkOptions {
-                    prefix: Some("~debug".into()),
+                    prefix: Some("~".into()),
                     edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(std::time::Duration::from_secs(3600)))),
                     case_insensitive_commands: true,
                     ..Default::default()
