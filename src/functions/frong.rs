@@ -2,9 +2,7 @@ use poise::serenity_prelude::CreateEmbed;
 use poise::CreateReply;
 
 // import the Data struct from the main file
-use super::super::Data;
-type Error = Box<dyn std::error::Error + Send + Sync>;
-type Context<'a> = poise::Context<'a, Data, Error>;
+use super::super::{Error, Context};
 
 #[poise::command(slash_command, prefix_command)]
 pub async fn frongs(ctx: Context<'_>) -> Result<(), Error> {
