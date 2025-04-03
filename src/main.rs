@@ -29,17 +29,28 @@ impl EventHandler for Handler {
         trace!("Message retrieved: {:?}", msg);
         // check the message isn't from the bot and contains "frong"
         if !msg.author.bot && msg.content.to_ascii_lowercase().contains("frong") {
-            let builder = CreateMessage::new()
-                .content("frong")
-                .add_file(CreateAttachment::path("frong.jpg").await.unwrap());
-            if let Err(err) = msg.channel_id.send_message(&ctx.http, builder).await {
-                error!("Error replying frong: {err:?}");
+            // attempt to load image
+            let attachment_result = CreateAttachment::path("frong.jpg").await;
+            match attachment_result {
+                Ok(attachment) => {
+                    let builder = CreateMessage::new()
+                        .content("frong")
+                        .add_file(attachment);
+                    
+                    if let Err(err) = msg.channel_id.send_message(&ctx.http, builder).await {
+                        error!("Error replying frong: {:?}", err);
+                    }
+                }
+                Err(err) => {
+                    error!("Failed to create attachment: {:?}", err);
+                    if msg.channel_id.say(&ctx.http, "frong\n-# There was an error loading the image. oops.").await.is_err() {
+                        error!("Error sending fallback message");
+                    }
+                }
             }
         }
     }
 }
-
-
 
 #[tokio::main]
 async fn main() {
