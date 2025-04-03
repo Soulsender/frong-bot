@@ -1,4 +1,4 @@
-use functions::{ask_frong, frong};
+use functions::{ask_frong, frong, googlethat};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
 use std::sync::Arc;
@@ -88,6 +88,7 @@ async fn main() {
                 frong::frongonianunits(),
                 frong::unfuckwithable(),
                 frong::frongs(),
+                googlethat::googlethat(),
             ],
             // prefix command for debug
             // used to easily register commands
