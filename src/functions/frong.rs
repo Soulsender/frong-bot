@@ -1,5 +1,6 @@
 use poise::serenity_prelude::CreateEmbed;
 use poise::CreateReply;
+use log::*;
 
 // import the Data struct from the main file
 use super::super::{Error, Context};
@@ -14,6 +15,7 @@ pub async fn frongs(ctx: Context<'_>) -> Result<(), Error> {
     };
 
     ctx.send(message).await?;
+    trace!("frongs() called");
     Ok(())
 }
 
@@ -28,6 +30,7 @@ pub async fn frong(ctx: Context<'_>) -> Result<(), Error> {
     };
 
     ctx.send(message).await?;
+    trace!("ask_frong() called");
     Ok(())
 }
 
@@ -41,6 +44,7 @@ pub async fn frongincidence(ctx: Context<'_>) -> Result<(), Error> {
     };
 
     ctx.send(message).await?;
+    trace!("frongincidence() called");
     Ok(())
 }
 
@@ -55,6 +59,7 @@ pub async fn frang(ctx: Context<'_>) -> Result<(), Error> {
     };
 
     ctx.send(message).await?;
+    trace!("frang() called");
     Ok(())
 }
 
@@ -69,6 +74,7 @@ pub async fn frongonianunits(ctx: Context<'_>) -> Result<(), Error> {
     };
 
     ctx.send(message).await?;
+    trace!("frongonianunits() called");
     Ok(())
 }
 
@@ -83,5 +89,6 @@ pub async fn unfuckwithable(ctx: Context<'_>) -> Result<(), Error> {
     };
 
     ctx.send(message).await?;
+    trace!("unfuckwithable() called");
     Ok(())
 }

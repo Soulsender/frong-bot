@@ -1,6 +1,6 @@
 use chatgpt::prelude::ChatGPT;
 use chatgpt::types::CompletionResponse;
-use log::{debug, error, log_enabled, info, warn, Level};
+use log::*;
 
 // import the structs from the main file
 use super::super::{Error, Context};
@@ -14,6 +14,6 @@ pub async fn ask_frong(ctx: Context<'_>, #[description = "Ask the almighty"] que
         .await?;
     let answer = format!("**Question:** {question}\n\n{}", &response.message().content);
     ctx.say(answer).await?;
-    debug!("ask_frong() called");
+    trace!("ask_frong() called");
     Ok(())
 }

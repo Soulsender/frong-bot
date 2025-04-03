@@ -2,8 +2,8 @@ use functions::{ask_frong, frong};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
 use std::sync::Arc;
-use serenity::{async_trait, prelude, Message, EventHandler};
-use log::{debug, error, log_enabled, info, warn, Level};
+use serenity::*;
+use log::*;
 
 
 
@@ -21,26 +21,44 @@ async fn register(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+// code to handle events (ie. a message was sent)
 struct Handler;
-
-#[serenity::async_trait]
+#[async_trait]
 impl EventHandler for Handler {
-    async fn message(&self, ctx: poise::serenity_prelude::Context, msg: Message) {
-        dbg!(msg);
+    async fn message(&self, ctx: serenity::Context, msg: Message) {
+        trace!("Message retrieved: {:?}", msg);
+        // check the message isn't from the bot and contains "frong"
+        if !msg.author.bot && msg.content.to_ascii_lowercase().contains("frong") {
+            let builder = CreateMessage::new()
+                .content("frong")
+                .add_file(CreateAttachment::path("frong.jpg").await.unwrap());
+            if let Err(err) = msg.channel_id.send_message(&ctx.http, builder).await {
+                error!("Error replying frong: {err:?}");
+            }
+        }
     }
 }
 
+
+
 #[tokio::main]
 async fn main() {
-    // env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
-    info!("asd");
+    // by default only log output from our code
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("frong_bot_rust=info")).init();
+    info!("Compiling bot options...");
     
     // get token from .env file
     dotenv::from_path(".env").expect("[!] No path found to .env");
-    dotenv().expect("[!] Error loading .env file");
-
+    dotenv().unwrap_or_else(|err| {
+        error!("Failed to retrieve enviroment variable: {}", err);
+        panic!()
+    });
     // set token variable
-    let token = std::env::var("TOKEN").expect("[!] No Bot Token Provided");
+    let token = std::env::var("TOKEN").unwrap_or_else(|err| {
+        error!("Token failed to be retrieved: {}", err);
+        panic!()
+    });
+    info!("Token retrieved successfully!");
 
     // set bot intents
     let intents = serenity::GatewayIntents::all();
@@ -77,9 +95,10 @@ async fn main() {
             })
         })
         .build();
+    info!("Client built successfully!");
 
     // create bot client
-    let client = serenity::ClientBuilder::new(token, intents).framework(framework).await;
+    let client = serenity::ClientBuilder::new(token, intents).event_handler(Handler).framework(framework).await;
 
     // start the client
     info!("Starting client...");
