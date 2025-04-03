@@ -1,6 +1,8 @@
 # Frong Bot Rust
 
-A multipurpose discord bot originally created for a meme (rewritten in rust).
+A multipurpose asyncronous discord bot originally created for a meme (rewritten in rust).
+
+[The original can be found here.](https://github.com/Soulsender/frong-bot-python)
 
 ### Functions
 - `/askfrong` can be used to get the bot to use the ChatGPT API to respond in the theme of the god Frong.
