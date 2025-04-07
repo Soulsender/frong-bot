@@ -1,10 +1,9 @@
 use functions::{ask_frong, frong, googlethat};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
-use std::sync::Arc;
+use std::{path::Path, sync::Arc};
 use serenity::*;
 use log::*;
-
 
 
 mod functions;
@@ -58,19 +57,19 @@ async fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("frong_bot_rust=info")).init();
     info!("Compiling bot options...");
     
-    // get token from .env file
-    dotenv::from_path(".env").expect("[!] No path found to .env");
-    dotenv().unwrap_or_else(|err| {
-        error!("Failed to retrieve enviroment variable: {}", err);
-        panic!()
-    });
+    // gets env vars from file
+    if Path::new(".env").exists() {
+        dotenv().unwrap();
+    }
+
     // set token variable
+    // by default will look for a session env  before the value in the .env file
     let token = std::env::var("TOKEN").unwrap_or_else(|err| {
         error!("Token failed to be retrieved: {}", err);
         panic!()
     });
     info!("Token retrieved successfully!");
-
+    
     // set bot intents
     let intents = serenity::GatewayIntents::all();
 

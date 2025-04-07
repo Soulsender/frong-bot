@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anstream = "0.6.18"
 chatgpt_rs = "1.2.3"
 dotenv = "0.15.0"
 env_logger = "0.11.8"
@@ -12,3 +13,6 @@ poise = "0.6.1"
 serenity = "0.12.4"
 tokio = { version = "1", features = ["full"] }
 
+[[bin]]
+name = "frong-bot-rust"
+path = "src/main.rs"

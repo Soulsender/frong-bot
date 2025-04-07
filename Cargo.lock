@@ -600,6 +600,7 @@ dependencies = [
 name = "frong-bot-rust"
 version = "0.1.0"
 dependencies = [
+ "anstream",
  "chatgpt_rs",
  "dotenv",
  "env_logger",

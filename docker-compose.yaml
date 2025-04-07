@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  frong-bot:
+    image: soulsender/frong-bot:2.0
+    environment:
+      - TOKEN=your_token_here
+      - OPENAI_KEY=your_api_key_here
+    restart: unless-stopped
+    
