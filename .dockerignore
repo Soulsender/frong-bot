@@ -1,1 +1,8 @@
+target
+.git
+.gitignore
+Cargo.lock
+Dockerfile
+*.md
+tests
 .env
