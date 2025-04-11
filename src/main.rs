@@ -107,12 +107,12 @@ async fn main() {
             commands: c,
             // prefix command for debug
             // used to easily register commands
-                prefix_options: poise::PrefixFrameworkOptions {
-                    prefix: Some("~".into()),
-                    edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(std::time::Duration::from_secs(3600)))),
-                    case_insensitive_commands: true,
-                    ..Default::default()
-                },
+            prefix_options: poise::PrefixFrameworkOptions {
+                prefix: Some("~".into()),
+                edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(std::time::Duration::from_secs(3600)))),
+                case_insensitive_commands: true,
+                ..Default::default()
+            },
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
