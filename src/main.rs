@@ -57,7 +57,7 @@ async fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("frong_bot_rust=info")).init();
     info!("Compiling bot options...");
     
-    // gets env vars from file
+    // load env vars from file if it exists
     if Path::new(".env").exists() {
         dotenv().unwrap();
     }
@@ -73,22 +73,31 @@ async fn main() {
     // set bot intents
     let intents = serenity::GatewayIntents::all();
 
+    let mut c = vec![
+        ask_frong::ask_frong(),
+        frong::frong(),
+        frong::frongincidence(),
+        frong::frang(),
+        frong::frongonianunits(),
+        frong::unfuckwithable(),
+        frong::frongs(),
+        googlethat::googlethat(),
+    ];
+
+    // if "DEV" env variable is set to "true" then debugging options will be allowed
+    if std::env::var("DEV").unwrap_or_else(|_| {
+        "false".to_string()
+    }) == "true" {
+        c.push(register());
+        warn!("Running with developer enviroment enabled");
+    }
+
     // setup pose framework
     // this includes slash commands and guild(s)
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             // list of slash commands
-            commands: vec![
-                register(),
-                ask_frong::ask_frong(),
-                frong::frong(),
-                frong::frongincidence(),
-                frong::frang(),
-                frong::frongonianunits(),
-                frong::unfuckwithable(),
-                frong::frongs(),
-                googlethat::googlethat(),
-            ],
+            commands: c,
             // prefix command for debug
             // used to easily register commands
                 prefix_options: poise::PrefixFrameworkOptions {

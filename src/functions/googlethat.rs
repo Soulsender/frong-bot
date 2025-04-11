@@ -1,5 +1,3 @@
-use poise::serenity_prelude::CreateEmbed;
-use poise::CreateReply;
 use log::*;
 
 // import the Data struct from the main file
