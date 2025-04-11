@@ -51,6 +51,7 @@ impl EventHandler for Handler {
     }
 }
 
+
 #[tokio::main]
 async fn main() {
     // by default only log output from our code
@@ -70,8 +71,14 @@ async fn main() {
     });
     info!("Token retrieved successfully!");
     
-    // set bot intents
+    // set bot intents and activity
     let intents = serenity::GatewayIntents::all();
+    let activity = ActivityData { 
+        name: ("calls to frongation".to_string()), 
+        kind: (poise::serenity_prelude::ActivityType::Listening), 
+        state: (None), 
+        url: (None) 
+    };
 
     let mut c = vec![
         ask_frong::ask_frong(),
@@ -89,7 +96,7 @@ async fn main() {
         "false".to_string()
     }) == "true" {
         c.push(register());
-        warn!("Running with developer enviroment enabled");
+        warn!("Running with developer enviroment enabled!");
     }
 
     // setup pose framework
@@ -118,7 +125,7 @@ async fn main() {
     info!("Client built successfully!");
 
     // create bot client
-    let client = serenity::ClientBuilder::new(token, intents).event_handler(Handler).framework(framework).await;
+    let client = serenity::ClientBuilder::new(token, intents).event_handler(Handler).framework(framework).activity(activity).await;
 
     // start the client
     info!("Starting client...");
