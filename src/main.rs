@@ -1,4 +1,4 @@
-use functions::{ask_frong, frong, googlethat};
+use functions::{ask_frong, database, frong, googlethat};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
 use std::{path::Path, sync::Arc};
@@ -96,6 +96,7 @@ async fn main() {
         "false".to_string()
     }) == "true" {
         c.push(register());
+        c.push(database::frong_increment());
         warn!("Running with developer enviroment enabled!");
     }
 
@@ -123,6 +124,8 @@ async fn main() {
         })
         .build();
     info!("Client built successfully!");
+
+    database::create_db();
 
     // create bot client
     let client = serenity::ClientBuilder::new(token, intents).event_handler(Handler).framework(framework).activity(activity).await;
