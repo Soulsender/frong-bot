@@ -1,3 +1,4 @@
+use anstream::println;
 use functions::{ask_frong, database, frong, googlethat};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
@@ -47,6 +48,9 @@ impl EventHandler for Handler {
                     }
                 }
             }
+            let id = msg.author.id.into();
+            let user = msg.author.name;
+            database::increment_user_db(id, user);
         }
     }
 }
@@ -96,7 +100,6 @@ async fn main() {
         "false".to_string()
     }) == "true" {
         c.push(register());
-        c.push(database::frong_increment());
         warn!("Running with developer enviroment enabled!");
     }
 

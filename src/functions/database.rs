@@ -7,16 +7,6 @@ use super::super::{Error, Context};
 
 const DB_NAME: &str = "frong.db";
 
-#[poise::command(slash_command, prefix_command)]
-pub async fn frong_increment(ctx: Context<'_>) -> Result<(), Error> {
-    let id = ctx.author().id.into();
-    let user = ctx.author().name.to_string();
-    increment_user_db(id, user);
-    ctx.say("incremented").await?;
-    trace!("frongs() called");
-    Ok(())
-}
-
 pub fn increment_user_db(user_id: i64, user: String) {
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
 
