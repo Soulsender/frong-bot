@@ -12,7 +12,6 @@ pub async fn frongs(ctx: Context<'_>) -> Result<(), Error> {
         embeds: vec![embed],
         ..Default::default()
     };
-
     ctx.send(message).await?;
     trace!("frongs() called");
     Ok(())

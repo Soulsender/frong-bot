@@ -100,6 +100,7 @@ async fn main() {
         "false".to_string()
     }) == "true" {
         c.push(register());
+        c.push(database::db_debug());
         warn!("Running with developer enviroment enabled!");
     }
 
