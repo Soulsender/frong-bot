@@ -9,15 +9,15 @@ use super::super::{Error, Context};
 
 const DB_NAME: &str = "frong.db";
 struct User {
-    sql_id: i32,
     username: String,
-    discord_id: i32,
+    discord_id: String,
     frongs: i32
 }
 
 #[poise::command(slash_command, prefix_command)]
 pub async fn db_debug(ctx: Context<'_>) -> Result<(), Error> {
-    get_db();
+    
+    get_entire_db();
     Ok(())
 }
 
@@ -54,23 +54,17 @@ pub fn create_db() {
     ).unwrap_or(1);
 }
 
-pub fn get_db() {
+pub fn get_entire_db() {
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
-    debug!("{}", database.execute(
-        "SELECT * FROM frong_count WHERE sql_user_id = {i}",
-        []
-    ).unwrap_or(1));
     let i = 1;
-    let mut q = database.prepare("SELECT sql_user_id username discord_user_id frongs FROM frong_count WHERE sql_user_id = {i}").unwrap();
-    let iter = q.query_map(&[(":sql_user_id", sql_user_id.to_string().as_str())], |row| {
+    let mut q = database.prepare("SELECT sql_user_id, username, discord_user_id, frongs FROM frong_count WHERE sql_user_id = ?").unwrap();
+    let q = q.query_row(params![i], |row| {
         Ok(User {
-            sql_id: i,
             username: row.get(1)?,
             discord_id: row.get(2)?,
             frongs: row.get(3)?,
-         })
-    });
-    for user in iter {
-        println!("Found person {:?}", user);
-    }
+    })});
+    
+    println!("{}", q.unwrap().username);
+    
 }
