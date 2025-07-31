@@ -57,17 +57,25 @@ pub fn create_db() {
 
 pub fn get_entire_db() {
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
-    let i = 1;
-    let mut q = database.prepare("SELECT sql_user_id, username, discord_user_id, frongs FROM frong_count WHERE sql_user_id = ?").unwrap();
-    let q = q.query_map(params![i], |row| {
+    let mut end_string = String::new();
+    let mut query = database.prepare("SELECT sql_user_id, username, discord_user_id, frongs FROM frong_count").unwrap();    
+
+    let user_iter = query.query_map([], |row| {
         Ok(User {
             username: row.get(1)?,
             discord_id: row.get(2)?,
             frongs: row.get(3)?,
-    })});
-    
-    for x in q.iter() {
-        println!("{:?}", x);
+        })
+    }).unwrap();
+
+    for user in user_iter {
+        let user = user.unwrap();
+        end_string.push_str(&user.username);
     }
+
+    println!("{}", end_string)
+    // get amount of rows in db
+
+    // for every row in db, append username to total string
     
 }
