@@ -6,3 +6,4 @@ Dockerfile
 *.md
 tests
 .env
+frong.db
