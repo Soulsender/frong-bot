@@ -1,10 +1,9 @@
-use functions::{ask_frong, frong, googlethat};
+use functions::{ask_frong, leaderboard, frong, googlethat};
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
 use std::{path::Path, sync::Arc};
 use serenity::*;
 use log::*;
-
 
 mod functions;
 
@@ -26,7 +25,8 @@ struct Handler;
 impl EventHandler for Handler {
     async fn message(&self, ctx: serenity::Context, msg: Message) {
         trace!("Message retrieved: {:?}", msg);
-        // check the message isn't from the bot and contains "frong"
+
+        // this is the code to detect if a user says "frong"
         if !msg.author.bot && msg.content.to_ascii_lowercase().contains("frong") {
             // attempt to load image
             let attachment_result = CreateAttachment::path("frong.jpg").await;
@@ -47,6 +47,9 @@ impl EventHandler for Handler {
                     }
                 }
             }
+            let id = msg.author.id.into();
+            let user = msg.author.name;
+            leaderboard::increment_user_db(id, user);
         }
     }
 }
@@ -80,7 +83,7 @@ async fn main() {
         url: (None) 
     };
 
-    let mut c = vec![
+    let mut commands = vec![
         ask_frong::ask_frong(),
         frong::frong(),
         frong::frongincidence(),
@@ -89,13 +92,14 @@ async fn main() {
         frong::unfuckwithable(),
         frong::frongs(),
         googlethat::googlethat(),
+        leaderboard::leaderboard(),
     ];
 
     // if "DEV" env variable is set to "true" then debugging options will be allowed
     if std::env::var("DEV").unwrap_or_else(|_| {
         "false".to_string()
     }) == "true" {
-        c.push(register());
+        commands.push(register());
         warn!("Running with developer enviroment enabled!");
     }
 
@@ -104,7 +108,7 @@ async fn main() {
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             // list of slash commands
-            commands: c,
+            commands,
             // prefix command for debug
             // used to easily register commands
             prefix_options: poise::PrefixFrameworkOptions {
@@ -123,6 +127,8 @@ async fn main() {
         })
         .build();
     info!("Client built successfully!");
+
+    leaderboard::create_db();
 
     // create bot client
     let client = serenity::ClientBuilder::new(token, intents).event_handler(Handler).framework(framework).activity(activity).await;
