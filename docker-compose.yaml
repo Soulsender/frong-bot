@@ -1,8 +1,6 @@
-version: '3'
-
 services:
   frong-bot:
-    image: soulsender/frong-bot:2.0
+    image: soulsender/frong-bot:2.2
     environment:
       - TOKEN=your_token_here
       - OPENAI_KEY=your_api_key_here

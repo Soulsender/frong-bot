@@ -37,17 +37,18 @@ pub fn increment_user_db(user_id: i64, user: String) {
          ON CONFLICT(discord_user_id)
          DO UPDATE SET frongs = frongs + 1",
         params![user, user_id],
-    ).unwrap_or(1);
+    ).unwrap_or_default();
 
     database.execute(
         "UPDATE frong_count
          SET username = ?1
          WHERE discord_user_id = ?2",
         params![user, user_id],
-    ).unwrap_or(1);
+    ).unwrap_or_default();
 }
 
 pub fn create_db() {
+    warn!("New frong.db created!");
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
 
     database.execute(
@@ -58,7 +59,7 @@ pub fn create_db() {
             frongs            INTEGER NOT NULL DEFAULT 0
         )",
         [],
-    ).unwrap_or(1);
+    ).unwrap_or_default();
 }
 
 fn get_entire_db() -> Vec<User> {
@@ -75,10 +76,16 @@ fn get_entire_db() -> Vec<User> {
 
     // iterates over every user struct returned by the sql query
     for user in user_iter {
-        let user = user.unwrap();
-        user_list.push(user);
+        match user {
+            Ok(user) => {
+                user_list.push(user);
+            }
+            Err(e) => {
+                error!("There was an error getting a user: {}", e);
+                continue;
+            }
+        }
     }
-    
     user_list
 }
 

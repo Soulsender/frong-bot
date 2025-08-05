@@ -6,6 +6,7 @@ Dockerfile
 docker-compose.yaml
 docker-compose.yml
 data/*.db
+testing
 *.md
 tests
 .env

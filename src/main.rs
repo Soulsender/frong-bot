@@ -134,6 +134,6 @@ async fn main() {
     let client = serenity::ClientBuilder::new(token, intents).event_handler(Handler).framework(framework).activity(activity).await;
 
     // start the client
-    info!("Starting client...");
+    info!("Client Started!");
     client.unwrap().start().await.unwrap();
 }
