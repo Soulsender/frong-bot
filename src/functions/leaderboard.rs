@@ -33,7 +33,7 @@ pub fn increment_user_db(user_id: i64, user: String) {
 
     database.execute(
         "INSERT INTO frong_count (username, discord_user_id, frongs)
-         VALUES (?1, ?2, 0)
+         VALUES (?1, ?2, 1)
          ON CONFLICT(discord_user_id)
          DO UPDATE SET frongs = frongs + 1",
         params![user, user_id],
