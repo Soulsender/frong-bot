@@ -6,7 +6,7 @@ use poise::serenity_prelude::{CreateEmbed};
 // import the Data struct from the main file
 use super::super::{Error, Context};
 
-const DB_NAME: &str = "frong.db";
+const DB_NAME: &str = "./data/frong.db";
 struct User {
     username: String,
     discord_id: String,
