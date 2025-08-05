@@ -2,7 +2,7 @@
 
 A multipurpose asyncronous discord bot originally created for a meme (rewritten in rust).
 
-[The original can be found here.](https://github.com/Soulsender/frong-bot-python)
+[Invite frong bot here!](https://discord.com/oauth2/authorize?client_id=1063322999400431646&permissions=589883627273282&integration_type=0&scope=applications.commands+bot)
 
 ### Functions
 - `/askfrong` can be used to get the bot to use the ChatGPT API to respond in the theme of the god Frong.

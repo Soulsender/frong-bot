@@ -6,6 +6,8 @@ use poise::serenity_prelude::{CreateEmbed};
 // import the Data struct from the main file
 use super::super::{Error, Context};
 
+// the path to the frong database
+// this is mounted via docker bind 
 const DB_NAME: &str = "./data/frong.db";
 struct User {
     username: String,
@@ -13,6 +15,7 @@ struct User {
     frongs: i32
 }
 
+// the actual leaderboard command
 #[poise::command(slash_command, prefix_command)]
 pub async fn leaderboard(ctx: Context<'_>) -> Result<(), Error> {
     let embed = CreateEmbed::new().title(":crown: Leaderboard")
@@ -28,9 +31,11 @@ pub async fn leaderboard(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+// the function to increment the frongs of a user
 pub fn increment_user_db(user_id: i64, user: String) {
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
 
+    // if the user doesn't exist
     database.execute(
         "INSERT INTO frong_count (username, discord_user_id, frongs)
          VALUES (?1, ?2, 1)
@@ -39,6 +44,7 @@ pub fn increment_user_db(user_id: i64, user: String) {
         params![user, user_id],
     ).unwrap_or_default();
 
+    // if the user exists
     database.execute(
         "UPDATE frong_count
          SET username = ?1
@@ -47,6 +53,7 @@ pub fn increment_user_db(user_id: i64, user: String) {
     ).unwrap_or_default();
 }
 
+// will create a new db if it doesn't already exist
 pub fn create_db() {
     warn!("New frong.db created!");
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
@@ -62,6 +69,7 @@ pub fn create_db() {
     ).unwrap_or_default();
 }
 
+// returns a vector of all the users in the database
 fn get_entire_db() -> Vec<User> {
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
     let mut query = database.prepare("SELECT sql_user_id, username, discord_user_id, frongs FROM frong_count").unwrap();
@@ -89,6 +97,8 @@ fn get_entire_db() -> Vec<User> {
     user_list
 }
 
+// create the string for the embed of the top 10 users
+// this sorts from most to least amount of frongs
 fn user_frongs(mut user_list: Vec<User>) -> String {
     let mut end_string = String::new();
 
@@ -103,6 +113,7 @@ fn user_frongs(mut user_list: Vec<User>) -> String {
     end_string
 }
 
+// get the total amount of frongs across all users
 fn total_frongs(user_list: Vec<User>) -> i32 {
     let total_frongs: i32 = user_list.iter().map(|user| user.frongs).sum();
     total_frongs

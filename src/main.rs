@@ -10,8 +10,10 @@ mod functions;
 struct Data {} // user data
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
+const DEBUG_PREFIX: &str = "~";
 
 // define debug slash command register
+// this will only be available during runtime if the DEV=true env variable is set
 #[poise::command(prefix_command)]
 async fn register(ctx: Context<'_>) -> Result<(), Error> {
     poise::builtins::register_application_commands_buttons(ctx).await?;
@@ -27,6 +29,7 @@ impl EventHandler for Handler {
         trace!("Message retrieved: {:?}", msg);
 
         // this is the code to detect if a user says "frong"
+        // it will ignore the bot's own response 
         if !msg.author.bot && msg.content.to_ascii_lowercase().contains("frong") {
             // attempt to load image
             let attachment_result = CreateAttachment::path("frong.jpg").await;
@@ -83,6 +86,7 @@ async fn main() {
         url: (None) 
     };
 
+    // all the regular commands, excluding developer commands
     let mut commands = vec![
         ask_frong::ask_frong(),
         frong::frong(),
@@ -95,7 +99,7 @@ async fn main() {
         leaderboard::leaderboard(),
     ];
 
-    // if "DEV" env variable is set to "true" then debugging options will be allowed
+    // the commands if developer mode is enabled with "DEV=true" in the .env
     if std::env::var("DEV").unwrap_or_else(|_| {
         "false".to_string()
     }) == "true" {
@@ -112,7 +116,7 @@ async fn main() {
             // prefix command for debug
             // used to easily register commands
             prefix_options: poise::PrefixFrameworkOptions {
-                prefix: Some("~".into()),
+                prefix: Some(DEBUG_PREFIX.into()),
                 edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(std::time::Duration::from_secs(3600)))),
                 case_insensitive_commands: true,
                 ..Default::default()
@@ -128,6 +132,7 @@ async fn main() {
         .build();
     info!("Client built successfully!");
 
+    // initialize database
     leaderboard::create_db();
 
     // create bot client
