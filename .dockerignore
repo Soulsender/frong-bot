@@ -5,6 +5,7 @@ Cargo.lock
 Dockerfile
 docker-compose.yaml
 docker-compose.yml
+data/*.db
 *.md
 tests
 .env
