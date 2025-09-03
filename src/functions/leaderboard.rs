@@ -55,7 +55,6 @@ pub fn increment_user_db(user_id: i64, user: String) {
 
 // will create a new db if it doesn't already exist
 pub fn create_db() {
-    warn!("New frong.db created!");
     let database = rusqlite::Connection::open(DB_NAME).unwrap();
 
     database.execute(
@@ -66,7 +65,7 @@ pub fn create_db() {
             frongs            INTEGER NOT NULL DEFAULT 0
         )",
         [],
-    ).unwrap_or_default();
+    ).unwrap_or_default();    
 }
 
 // returns a vector of all the users in the database
