@@ -1,4 +1,4 @@
-use functions::{ask_frong, leaderboard, frong, googlethat};
+use functions::*;
 use poise::serenity_prelude as serenity;
 use dotenv::dotenv;
 use std::{path::Path, sync::Arc};
@@ -33,27 +33,12 @@ impl EventHandler for Handler {
 
         // detect if a user says "frong"
         if !msg.author.bot && msg.content.to_ascii_lowercase().contains("frong") {
-            // attempt to load image
-            let attachment_result = CreateAttachment::path("frong.jpg").await;
-            match attachment_result {
-                Ok(attachment) => {
-                    let builder = CreateMessage::new()
-                        .content("frong")
-                        .add_file(attachment);
-                    
-                    if let Err(err) = msg.channel_id.send_message(&ctx.http, builder).await {
-                        error!("Error replying frong: {:?}", err);
-                    }
-                }
-                Err(err) => {
-                    error!("Failed to create attachment: {:?}", err);
-                    if msg.channel_id.say(&ctx.http, "frong\n-# There was an error loading the image. oops.").await.is_err() {
-                        error!("Error sending fallback message");
-                    }
-                }
-            }
+
+           // attempt to load image 
+            discord_functions::load_image(&ctx, &msg, "frong.jpg".to_string()).await; 
+            
             let id = msg.author.id.into();
-            let user = msg.author.name;
+            let user = msg.author.name.clone();
             leaderboard::increment_user_db(id, user);
         }
 
@@ -62,24 +47,7 @@ impl EventHandler for Handler {
         if !msg.author.bot && msg.content.to_ascii_lowercase().contains("i use arch btw") {
             let num = rand::rng().random_range(0..2);
             if num == 0 {
-                // attempt to load image
-                let attachment_result = CreateAttachment::path("arch_form.jpg").await;
-                match attachment_result {
-                    Ok(attachment) => {
-                        let builder = CreateMessage::new()
-                            .add_file(attachment);
-                        
-                        if let Err(err) = msg.channel_id.send_message(&ctx.http, builder).await {
-                            error!("Error replying frong: {:?}", err);
-                        }
-                    }
-                    Err(err) => {
-                        error!("Failed to create attachment: {:?}", err);
-                        if msg.channel_id.say(&ctx.http, "-# There was an error loading the image. oops.").await.is_err() {
-                            error!("Error sending fallback message");
-                        }
-                    }
-                }
+                discord_functions::load_image(&ctx, &msg, "arch_form.jpg".to_string()).await;
             } else {
                 let responses: Vec<&str> = vec![
                     "Oh you use arch? Why don’t you `sudo pacman -S some-bitches`.", 
@@ -96,7 +64,6 @@ impl EventHandler for Handler {
                 };          
             }
         }
-        
     }
 }
 
