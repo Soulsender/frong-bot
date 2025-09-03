@@ -4,6 +4,7 @@ use dotenv::dotenv;
 use std::{path::Path, sync::Arc};
 use serenity::*;
 use log::*;
+use rand::Rng;
 
 mod functions;
 
@@ -11,6 +12,8 @@ struct Data {} // user data
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 const DEBUG_PREFIX: &str = "~";
+
+
 
 // define debug slash command register
 // this will only be available during runtime if the DEV=true env variable is set
@@ -28,8 +31,7 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: serenity::Context, msg: Message) {
         trace!("Message retrieved: {:?}", msg);
 
-        // this is the code to detect if a user says "frong"
-        // it will ignore the bot's own response 
+        // detect if a user says "frong"
         if !msg.author.bot && msg.content.to_ascii_lowercase().contains("frong") {
             // attempt to load image
             let attachment_result = CreateAttachment::path("frong.jpg").await;
@@ -54,6 +56,47 @@ impl EventHandler for Handler {
             let user = msg.author.name;
             leaderboard::increment_user_db(id, user);
         }
+
+
+        // detect if the phrase "i use arch btw" is said
+        if !msg.author.bot && msg.content.to_ascii_lowercase().contains("i use arch btw") {
+            let num = rand::rng().random_range(0..2);
+            if num == 0 {
+                // attempt to load image
+                let attachment_result = CreateAttachment::path("arch_form.jpg").await;
+                match attachment_result {
+                    Ok(attachment) => {
+                        let builder = CreateMessage::new()
+                            .add_file(attachment);
+                        
+                        if let Err(err) = msg.channel_id.send_message(&ctx.http, builder).await {
+                            error!("Error replying frong: {:?}", err);
+                        }
+                    }
+                    Err(err) => {
+                        error!("Failed to create attachment: {:?}", err);
+                        if msg.channel_id.say(&ctx.http, "-# There was an error loading the image. oops.").await.is_err() {
+                            error!("Error sending fallback message");
+                        }
+                    }
+                }
+            } else {
+                let responses: Vec<&str> = vec![
+                    "Oh you use arch? Why don’t you `sudo pacman -S some-bitches`.", 
+                    "https://tenor.com/view/arch-linux-linux-open-source-arch-i-use-arch-btw-gif-25315741",
+                    "https://tenor.com/view/arch-linux-i-use-arch-lonely-gif-26341678",
+                    "https://tenor.com/view/me-looking-for-who-asked-looking-for-who-asked-who-asked-me-looking-gif-20318322",
+                ];
+                let num = rand::rng().random_range(0..responses.len());
+                let response = responses[num];
+                let builder = CreateMessage::new()
+                            .content(response);
+                if msg.channel_id.send_message(&ctx.http, builder).await.is_err() {
+                            error!("Error sending fallback message");
+                };          
+            }
+        }
+        
     }
 }
 
