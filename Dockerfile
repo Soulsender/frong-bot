@@ -17,7 +17,7 @@ FROM debian:bullseye-slim
 WORKDIR /app
 
 COPY --from=builder /app/target/release/frong-bot-rust .
-COPY frong.jpg .
+COPY /assets .
 
 ENV TOKEN=yourtokenhere
 ENV OPENAI_KEY=yourtokenhere
