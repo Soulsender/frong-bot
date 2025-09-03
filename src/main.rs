@@ -44,7 +44,7 @@ impl EventHandler for Handler {
 
 
         // detect if the phrase "i use arch btw" is said
-        if !msg.author.bot && msg.content.to_ascii_lowercase().contains("i use arch btw") {
+        if !msg.author.bot && msg.content.to_ascii_lowercase().contains("arch btw") {
             let num = rand::rng().random_range(0..2);
             if num == 0 {
                 discord_functions::load_image(&ctx, &msg, "assets/arch_form.jpg".to_string()).await;
