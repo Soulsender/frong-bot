@@ -64,6 +64,30 @@ impl EventHandler for Handler {
                 };          
             }
         }
+
+        if !msg.author.bot && msg.content.to_ascii_lowercase().contains("nix") {
+            let s1 = r#"
+            "Just gonna install git"
+```bash
+sudo sed -i '/environment.systemPackages = with pkgs; \[/a \ git' \
+/etc/nixos/configuration.nix && sudo nixos-rebuild switch
+```
+            "#;
+            let responses: Vec<&str> = vec![
+                s1,
+                "https://tenor.com/view/nixos-nixos-rebuild-flake-gif-17654708210828148959",
+                "https://tenor.com/view/shibahaczix-shibahaczi-fasterhamster-sodasofa-gif-7786375252184614098",
+                "Have fun [solving your dependancy issues](http://www.chriswarbo.net/projects/nixos/nix_dependencies.html)",
+                "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Fu6q10wkbjcg71.png&f=1&nofb=1&ipt=885db5e4e4f5078cd62ce2cada3fe4436e95fcffa655e46a755a60fd5cc91310",
+            ];
+            let num = rand::rng().random_range(0..responses.len());
+            let response = responses[num];
+            let builder = CreateMessage::new()
+                        .content(response);
+            if msg.channel_id.send_message(&ctx.http, builder).await.is_err() {
+                        error!("Error sending fallback message");
+            };          
+        }
     }
 }
 
