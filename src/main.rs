@@ -89,8 +89,14 @@ sudo sed -i '/environment.systemPackages = with pkgs; \[/a \ git' \
             };          
         }
     }
-}
 
+    // runs when the bot starts
+    async fn ready(&self, ctx: serenity::Context, ready: Ready) {
+        let guilds = ctx.cache.guilds();
+        let user = ready.user.display_name();
+        info!("Logged in as {} in {} guilds", user, guilds.len());
+    }
+}
 
 #[tokio::main]
 async fn main() {
@@ -159,7 +165,7 @@ async fn main() {
         })
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
-                poise::builtins::register_in_guild(ctx, &framework.options().commands, Into::into(860417200426188820)).await?;
+                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })
         })
