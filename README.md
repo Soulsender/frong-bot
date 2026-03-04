@@ -14,6 +14,9 @@ A multipurpose asyncronous discord bot originally created for a meme (rewritten 
 - `/googlethat` can be used to sarcastically look something up for a user that is too lazy to do it themselves. The bot will reply with a link to [letmegooglethat.com](https://letmegooglethat.com/) with the search query specified.
 - `/frong` and `/frongs` can be used to get the bot to respond with different urban-dictionary-esc phrases made by the CosmodiumCS community.
 
+![](.github/workflows/assets/leaderboard_example.jpg)
+![](.github/workflows/assets/ex1.jpg)
+
 ### Why did I rewrite it in rust?
 Idk
 
